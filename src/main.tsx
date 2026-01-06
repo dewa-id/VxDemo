@@ -6,8 +6,8 @@ import { AuthProvider, type AuthProviderProps } from "react-oidc-context";
 
 const oidcConfig = {
   authority: "https://pp.verify-id.eu",
-  client_id: "signaturgruppen",
-  redirect_uri: "http://localhost:5173",
+  client_id: "e-Boks",
+  redirect_uri: "http://localhost:5173/cb",
 } satisfies AuthProviderProps;
 
 createRoot(document.getElementById("root")!).render(

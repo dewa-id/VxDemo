@@ -16,7 +16,7 @@ function App() {
         state: undefined,
         nonce: v4(),
         extraQueryParams: {
-          presentation_definition_id: "368df5b3-6298-49a6-b521-ef8645a32749",
+          presentation_template_id: "368df5b3-6298-49a6-b521-ef8645a32749",
         },
       });
     }
