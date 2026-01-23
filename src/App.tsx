@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react";
 import { useAuth } from "react-oidc-context";
 import { v4 } from "uuid";
 import jwtIconUrl from "./icons/jwt-io.svg";
@@ -6,21 +5,6 @@ import ssi_iconUrl from "./icons/SSI_tools.png";
 
 function App() {
   const auth = useAuth();
-  const hasRedirected = useRef(false);
-
-  useEffect(() => {
-    if (hasRedirected.current) return;
-    if (!auth.isAuthenticated && !auth.isLoading) {
-      hasRedirected.current = true;
-      void auth.signinRedirect({
-        state: undefined,
-        nonce: v4(),
-        extraQueryParams: {
-          presentation_template_id: "368df5b3-6298-49a6-b521-ef8645a32749",
-        },
-      });
-    }
-  }, [auth.isAuthenticated, auth.isLoading, auth]);
 
   switch (auth.activeNavigator) {
     case "signinSilent":
@@ -38,22 +22,23 @@ function App() {
   }
 
   if (auth.isAuthenticated) {
-    const idToken = auth.user?.id_token ?? "";
-    const goToJwtIo = () => {
-      if (!idToken) return;
-      const url = new URL("https://jwt.io/");
-      url.hash = `token=${encodeURIComponent(idToken)}`;
-      window.open(url.toString(), "_blank", "noopener,noreferrer");
-    };
+    const idToken = auth.user?.id_token;
+    const accessToken = auth.user?.access_token;
 
-    const goToDewa = () => {
-      if (!idToken) return;
+    console.debug("id token", idToken);
+    console.debug("access token", accessToken);
+
+    const goToJwtIoUrl =
+      idToken && `https://jwt.io/#token=${encodeURIComponent(idToken)}`;
+    const goToDewaUrl = (() => {
+      if (idToken == null) return undefined;
+
       const url = new URL("https://dev.dewa-id.com/");
       url.searchParams.set("decoderPayloadDisplay", "raw");
       url.searchParams.set("decoderSignatureLookup", "url");
       url.searchParams.set("jwtEncoded", idToken);
-      window.open(url.toString(), "_blank", "noopener,noreferrer");
-    };
+      return url.toString();
+    })();
 
     return (
       <div>
@@ -78,11 +63,13 @@ function App() {
           }}
         />
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-          <button
-            onClick={goToJwtIo}
-            disabled={!idToken}
+          <a
+            href={goToJwtIoUrl}
+            rel="noopener noreferrer"
+            target="_blank"
             style={{
               background: "#000",
+              textDecoration: "none",
               color: "#fff",
               borderRadius: "999px",
               border: "1px solid #000",
@@ -104,13 +91,15 @@ function App() {
               style={{ display: "inline-block" }}
             />
             <span>View on jwt.io</span>
-          </button>
-          <button
-            onClick={goToDewa}
-            disabled={!idToken}
+          </a>
+          <a
+            href={goToDewaUrl}
+            rel="noopener noreferrer"
+            target="_blank"
             style={{
               background: "#000",
               color: "#fff",
+              textDecoration: "none",
               borderRadius: "999px",
               border: "1px solid #000",
               padding: "0.6rem 1rem",
@@ -131,7 +120,7 @@ function App() {
               style={{ display: "inline-block" }}
             />
             <span>VIEW ON DEWA</span>
-          </button>
+          </a>
           <button
             onClick={() => void auth.removeUser()}
             style={{
@@ -159,10 +148,12 @@ function App() {
   return (
     <button
       onClick={() =>
-        void auth.signinRedirect({
+        auth.signinRedirect({
+          state: undefined /* let react-oidc-context generate new state */,
           nonce: v4(),
+          scope: "openid",
           extraQueryParams: {
-            presentation_definition_id: "c147092f-1954-4b5e-9fb1-fe0b466f30a0",
+            presentation_template_id: "368df5b3-6298-49a6-b521-ef8645a32749",
           },
         })
       }
