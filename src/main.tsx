@@ -5,8 +5,8 @@ import App from "./App.tsx";
 import { AuthProvider, type AuthProviderProps } from "react-oidc-context";
 
 const oidcConfig = {
-  authority: "https://auth.dewa.localhost",
-  client_id: "console_app",
+  authority: "https://pp.verify-id.eu",
+  client_id: "e-Boks",
   redirect_uri: "http://localhost:5173/cb",
 } satisfies AuthProviderProps;
 
