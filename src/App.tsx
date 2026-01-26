@@ -1,10 +1,12 @@
 import { useAuth } from "react-oidc-context";
+import { useState } from "react";
 import { v4 } from "uuid";
 import jwtIconUrl from "./icons/jwt-io.svg";
 import ssi_iconUrl from "./icons/SSI_tools.png";
 
 function App() {
   const auth = useAuth();
+  const [tokenType, setTokenType] = useState<'id' | 'access'>('id');
 
   switch (auth.activeNavigator) {
     case "signinSilent":
@@ -18,25 +20,29 @@ function App() {
   }
 
   if (auth.error) {
-    return <div>Oops... {auth.error.message}</div>;
+    return (<div>
+      <p>Oops... {auth.error.message}</p>
+      <a href="/">Go back</a>
+    </div>)
   }
 
   if (auth.isAuthenticated) {
     const idToken = auth.user?.id_token;
     const accessToken = auth.user?.access_token;
+    const activeToken = tokenType === 'id' ? idToken : accessToken;
 
     console.debug("id token", idToken);
     console.debug("access token", accessToken);
 
     const goToJwtIoUrl =
-      idToken && `https://jwt.io/#token=${encodeURIComponent(idToken)}`;
+      activeToken && `https://jwt.io/#token=${encodeURIComponent(activeToken)}`;
     const goToDewaUrl = (() => {
       if (idToken == null) return undefined;
 
       const url = new URL("https://ssi.dewa-id.com/");
       url.searchParams.set("decoderPayloadDisplay", "raw");
       url.searchParams.set("decoderSignatureLookup", "url");
-      url.searchParams.set("jwtEncoded", idToken);
+      url.searchParams.set("jwtEncoded", activeToken!);
       return url.toString();
     })();
 
@@ -44,11 +50,25 @@ function App() {
       <div>
         <p>Hello {auth.user?.profile.sub}</p>
         <p style={{ fontSize: "0.9rem", color: "#334155" }}>
-          ID token is ready below. Treat it as a secret.
+          {tokenType === 'id' ? 'ID token' : 'Access token'} is ready below. Treat it as a secret.
         </p>
+        <select
+          value={tokenType}
+          onChange={(e) => setTokenType(e.target.value as 'id' | 'access')}
+          style={{
+            marginBottom: "0.75rem",
+            padding: "0.5rem",
+            borderRadius: "0.25rem",
+            border: "1px solid #cbd5e1",
+            fontSize: "0.9rem",
+          }}
+        >
+          <option value="id">ID Token</option>
+          <option value="access">Access Token</option>
+        </select> <br />
         <textarea
           readOnly
-          value={idToken}
+          value={activeToken}
           style={{
             width: "100%",
             minHeight: "240px",
