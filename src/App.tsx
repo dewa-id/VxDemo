@@ -173,7 +173,7 @@ function App() {
           nonce: v4(),
           scope: "openid",
           extraQueryParams: {
-            presentation_template_id: "368df5b3-6298-49a6-b521-ef8645a32749",
+            // preferred_tenant: "demo-030a396a54fc4b96b651856176e4be30",
           },
         })
       }
