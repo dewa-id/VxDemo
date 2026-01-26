@@ -2,6 +2,7 @@ import { useAuth } from "react-oidc-context";
 import { v4 } from "uuid";
 import jwtIconUrl from "./icons/jwt-io.svg";
 import ssi_iconUrl from "./icons/SSI_tools.png";
+import { LoginPage } from "./LoginPage";
 
 function App() {
   const auth = useAuth();
@@ -144,23 +145,7 @@ function App() {
       </div>
     );
   }
-
-  return (
-    <button
-      onClick={() =>
-        auth.signinRedirect({
-          state: undefined /* let react-oidc-context generate new state */,
-          nonce: v4(),
-          scope: "openid",
-          extraQueryParams: {
-            presentation_template_id: "368df5b3-6298-49a6-b521-ef8645a32749",
-          },
-        })
-      }
-    >
-      Log in
-    </button>
-  );
+  return ( <LoginPage /> ); 
 }
 
 export default App;
