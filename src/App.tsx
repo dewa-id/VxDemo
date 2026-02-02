@@ -7,7 +7,18 @@ import ssi_iconUrl from "./icons/SSI_tools.png";
 function App() {
   const auth = useAuth();
   const [tokenType, setTokenType] = useState<'id' | 'access'>('id');
-  const [provider, setProvider] = useState<'github' | 'apple'>('github');
+
+  const handleLogin = (selectedProvider: 'github' | 'apple') => {
+    auth.signinRedirect({
+      state: undefined /* let react-oidc-context generate new state */,
+      nonce: v4(),
+      scope: "openid",
+      extraQueryParams: {
+        provider: selectedProvider,
+        // preferred_tenant: "demo-030a396a54fc4b96b651856176e4be30",
+      },
+    });
+  };
 
   switch (auth.activeNavigator) {
     case "signinSilent":
@@ -174,10 +185,10 @@ function App() {
         </p>
         <div style={{ display: "flex", gap: "0.5rem" }}>
           <button
-            onClick={() => setProvider('github')}
+            onClick={() => handleLogin('github')}
             style={{
-              background: provider === 'github' ? "#000" : "#fff",
-              color: provider === 'github' ? "#fff" : "#000",
+              background: "#000",
+              color: "#fff",
               border: "1px solid #000",
               borderRadius: "0.5rem",
               padding: "0.5rem 1rem",
@@ -186,13 +197,13 @@ function App() {
               cursor: "pointer",
             }}
           >
-            GitHub
+            Login with GitHub
           </button>
           <button
-            onClick={() => setProvider('apple')}
+            onClick={() => handleLogin('apple')}
             style={{
-              background: provider === 'apple' ? "#000" : "#fff",
-              color: provider === 'apple' ? "#fff" : "#000",
+              background: "#000",
+              color: "#fff",
               border: "1px solid #000",
               borderRadius: "0.5rem",
               padding: "0.5rem 1rem",
@@ -201,25 +212,10 @@ function App() {
               cursor: "pointer",
             }}
           >
-            Apple
+            Login with Apple
           </button>
         </div>
       </div>
-      <button
-        onClick={() =>
-          auth.signinRedirect({
-            state: undefined /* let react-oidc-context generate new state */,
-            nonce: v4(),
-            scope: "openid",
-            extraQueryParams: {
-              provider: provider,
-              // preferred_tenant: "demo-030a396a54fc4b96b651856176e4be30",
-            },
-          })
-        }
-      >
-        Log in
-      </button>
     </div>
   );
 }
