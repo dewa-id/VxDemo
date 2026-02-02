@@ -5,15 +5,13 @@ import App from "./App.tsx";
 import { AuthProvider, type AuthProviderProps } from "react-oidc-context";
 
 const oidcConfig = {
-  authority: "https://auth.staging.dewa-id.com",
-  client_id: "console_app",
+  authority: "https://auth.dewa.localhost",
+  client_id: "dewa_platform_local",
   redirect_uri: "https://auth-page.dewa.localhost/cb",
 } satisfies AuthProviderProps;
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <AuthProvider {...oidcConfig}>
-      <App />
-    </AuthProvider>
-  </StrictMode>
+  <AuthProvider {...oidcConfig}>
+    <App />
+  </AuthProvider>
 );
