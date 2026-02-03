@@ -8,7 +8,7 @@ function App() {
   const auth = useAuth();
   const [tokenType, setTokenType] = useState<'id' | 'access'>('id');
 
-  const handleLogin = (selectedProvider: 'github' | 'apple') => {
+  const handleLogin = (selectedProvider: 'github' | 'apple' | 'entra' | 'google') => {
     auth.signinRedirect({
       state: undefined /* let react-oidc-context generate new state */,
       nonce: v4(),
@@ -33,7 +33,8 @@ function App() {
 
   if (auth.error) {
     return (<div>
-      <p>Oops... {auth.error.message}</p>
+      <p>Oops... {auth.error.name}: {auth.error.message}</p>
+      <p>{'' + auth.error.innerError}</p>
       <a href="/">Go back</a>
     </div>)
   }
@@ -154,7 +155,14 @@ function App() {
             <span>VIEW ON DEWA</span>
           </a>
           <button
-            onClick={() => void auth.removeUser()}
+            onClick={async () => {
+              await auth.removeUser()
+              const url = new URL(window.location.href)
+              url.pathname = '/';
+              url.search = '';
+              url.hash = '';
+              await auth.signoutRedirect({post_logout_redirect_uri: url.href});
+            }}
             style={{
               background: "#000",
               color: "#fff",
@@ -183,7 +191,7 @@ function App() {
         <p style={{ marginBottom: "0.5rem", fontSize: "0.9rem", color: "#334155" }}>
           Choose authentication provider:
         </p>
-        <div style={{ display: "flex", gap: "0.5rem" }}>
+        <div >
           <button
             onClick={() => handleLogin('github')}
             style={{
@@ -197,7 +205,7 @@ function App() {
               cursor: "pointer",
             }}
           >
-            Login with GitHub
+            GitHub
           </button>
           <button
             onClick={() => handleLogin('apple')}
@@ -212,7 +220,37 @@ function App() {
               cursor: "pointer",
             }}
           >
-            Login with Apple
+            Apple
+          </button> <br />
+          <button
+            onClick={() => handleLogin('entra')}
+            style={{
+              background: "#000",
+              color: "#fff",
+              border: "1px solid #000",
+              borderRadius: "0.5rem",
+              padding: "0.5rem 1rem",
+              fontSize: "0.9rem",
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            Microsoft
+          </button>
+          <button
+            onClick={() => handleLogin('google')}
+            style={{
+              background: "#000",
+              color: "#fff",
+              border: "1px solid #000",
+              borderRadius: "0.5rem",
+              padding: "0.5rem 1rem",
+              fontSize: "0.9rem",
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            Google
           </button>
         </div>
       </div>
