@@ -61,7 +61,7 @@ function App() {
 
     return (
       <div>
-        <p>Hello {auth.user?.profile.sub}</p>
+        <p>Hello {auth.user?.profile.sub} ({auth.user?.profile.email || ''})</p>
         <p style={{ fontSize: "0.9rem", color: "#334155" }}>
           {tokenType === 'id' ? 'ID token' : 'Access token'} is ready below. Treat it as a secret.
         </p>
@@ -155,6 +155,27 @@ function App() {
             <span>VIEW ON DEWA</span>
           </a>
           <button
+            onClick={() => {
+              auth.signinSilent();
+            }}
+            style={{
+              background: "#000",
+              color: "#fff",
+              borderRadius: "999px",
+              border: "1px solid #000",
+              padding: "0.6rem 1rem",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.6rem",
+              fontWeight: 700,
+              letterSpacing: "0.02em",
+              textTransform: "uppercase",
+              boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
+            }}
+          >
+            REFRESH
+          </button>
+          <button
             onClick={async () => {
               await auth.removeUser()
               const url = new URL(window.location.href)
@@ -178,7 +199,7 @@ function App() {
               boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
             }}
           >
-            Log out
+            LOG OUT
           </button>
         </div>
       </div>
