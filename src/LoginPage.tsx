@@ -11,9 +11,12 @@ export function LoginPage() {
       nonce: v4(),
       scope: "openid",
       extraQueryParams: {
-        presentation_template_id: "4a3e4a2d-ec10-4ee5-888d-ba34bc6dcb6e",
+        presentation_template_id: "418db504-1de1-4b9c-8538-02ad007372ed",
+        service_name: "Title",
+        scan_qr_message: "Description of the service",
       },
     });
+    
 
   return (
     <div

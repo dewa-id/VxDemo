@@ -1,5 +1,4 @@
 import { useAuth } from "react-oidc-context";
-import { v4 } from "uuid";
 import jwtIconUrl from "./icons/jwt-io.svg";
 import ssi_iconUrl from "./icons/SSI_tools.png";
 import { LoginPage } from "./LoginPage";
