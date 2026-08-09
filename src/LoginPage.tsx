@@ -1,22 +1,28 @@
-import { useAuth } from "react-oidc-context";
-import { v4 } from "uuid";
-import eboksIconUrl from "./icons/e_boks.png";
+import { useState } from "react";
+import { BANKS, CLIENT_ID, startBankLogin, type Bank } from "./banks";
 
 export function LoginPage() {
-  const auth = useAuth();
+  const [busyBankId, setBusyBankId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const onSignIn = () =>
-    auth.signinRedirect({
-      state: undefined,
-      nonce: v4(),
-      scope: "openid",
-      extraQueryParams: {
-        presentation_template_id: "418db504-1de1-4b9c-8538-02ad007372ed",
-        service_name: "Title",
-        scan_qr_message: "Description of the service",
-      },
-    });
-    
+  const onSelectBank = async (bank: Bank) => {
+    setError(null);
+    setBusyBankId(bank.id);
+    try {
+      await startBankLogin(bank);
+      // Browser navigates away to the authorize endpoint on success.
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      setError(
+        message.includes("Failed to fetch")
+          ? `${message} — likely a CORS block on the PAR endpoint; it may need to be proxied through a backend.`
+          : message
+      );
+      setBusyBankId(null);
+    }
+  };
+
+  const busy = busyBankId !== null;
 
   return (
     <div
@@ -48,7 +54,7 @@ export function LoginPage() {
             color: "#0f172a",
           }}
         >
-          Login with e-Wallet
+          Choose your bank
         </h1>
 
         <p
@@ -59,67 +65,60 @@ export function LoginPage() {
             lineHeight: 1.5,
           }}
         >
-          This demo uses an e-Wallet–based login flow.
-          <br />
-          Click below to authenticate using your e-Boks ID.
+          Choose your bank to log into.
         </p>
 
-        <button
-          type="button"
-          onClick={onSignIn}
-          aria-label="Sign in with e-Boks ID"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "12px",
-            height: "44px",
-            padding: "0 22px 0 4px",
-            borderRadius: "9999px",
-            backgroundColor: "#BB1D2C",
-            color: "#FFFFFF",
-            fontSize: "15px",
-            fontWeight: 600,
-            border: "none",
-            cursor: "pointer",
-            width: "100%",
-            justifyContent: "center",
-          }}
-          onMouseOver={(e) =>
-            (e.currentTarget.style.backgroundColor = "#A91A27")
-          }
-          onMouseOut={(e) =>
-            (e.currentTarget.style.backgroundColor = "#BB1D2C")
-          }
+        <div
+          style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}
         >
-          <span
+          {BANKS.map((bank) => {
+            const isBusy = busyBankId === bank.id;
+            return (
+              <button
+                key={bank.id}
+                type="button"
+                onClick={() => void onSelectBank(bank)}
+                disabled={busy}
+                aria-label={`Log in with ${bank.label}`}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "10px",
+                  height: "52px",
+                  padding: "0 22px",
+                  borderRadius: "12px",
+                  backgroundColor: isBusy ? "#94a3b8" : bank.theme.primary,
+                  color: bank.theme.onPrimary,
+                  fontSize: "15px",
+                  fontWeight: 600,
+                  border: "none",
+                  cursor: busy ? "not-allowed" : "pointer",
+                  width: "100%",
+                  opacity: busy && !isBusy ? 0.5 : 1,
+                  transition: "opacity 120ms ease",
+                }}
+              >
+                {isBusy ? "Creating request…" : bank.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {error && (
+          <p
+            role="alert"
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "36px",
-              height: "36px",
-              borderRadius: "9999px",
-              backgroundColor: "#A91A27",
-              flex: "0 0 auto",
+              fontSize: "0.8rem",
+              color: "#b91c1c",
+              marginTop: "1.25rem",
+              lineHeight: 1.5,
+              wordBreak: "break-word",
             }}
           >
-            <img
-              src={eboksIconUrl}
-              alt=""
-              aria-hidden="true"
-              style={{
-                width: "20px",
-                height: "20px",
-                display: "block",
-                objectFit: "contain",
-              }}
-            />
-          </span>
-
-          <span style={{ whiteSpace: "nowrap" }}>
-            Sign in with e-Boks ID
-          </span>
-        </button>
+            {error}
+          </p>
+        )}
 
         <p
           style={{
@@ -128,7 +127,6 @@ export function LoginPage() {
             marginTop: "1.5rem",
           }}
         >
-          Demo environment · No production credentials required
         </p>
       </div>
     </div>
