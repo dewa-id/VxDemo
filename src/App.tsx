@@ -18,7 +18,32 @@ function App() {
   }
 
   if (auth.error) {
-    return <div>Oops... {auth.error.message}</div>;
+    return (
+      <div>
+        <p>Oops... {auth.error.message}</p>
+        <button
+          onClick={() => {
+            window.location.href = window.location.origin;
+          }}
+          style={{
+            background: "#000",
+            color: "#fff",
+            borderRadius: "999px",
+            border: "1px solid #000",
+            padding: "0.6rem 1rem",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.6rem",
+            fontWeight: 700,
+            letterSpacing: "0.02em",
+            textTransform: "uppercase",
+            boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
+          }}
+        >
+          Go back
+        </button>
+      </div>
+    );
   }
 
   if (auth.isAuthenticated) {

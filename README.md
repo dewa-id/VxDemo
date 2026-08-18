@@ -1,6 +1,6 @@
-# VxDemo
+# Verifier Demo
 
-A demo application showing how to interact with the VxAPI.
+A demo application showing how to interact with the Verifier API.
 
 ## Getting Started
 
