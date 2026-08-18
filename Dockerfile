@@ -12,5 +12,5 @@ RUN pnpm build
 FROM scratch AS static
 COPY --from=build /app/dist /dist
 
-FROM nginx:1-alpine AS nginx
+FROM nginxinc/nginx-unprivileged:1-alpine AS nginx
 COPY --from=build /app/dist /usr/share/nginx/html
