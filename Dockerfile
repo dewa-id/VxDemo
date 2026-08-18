@@ -9,7 +9,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm i --frozen-lockfile
 COPY . .
 RUN pnpm build
 
-FROM scratch AS final
+FROM scratch AS static
 COPY --from=build /app/dist /dist
 
 FROM nginx:1-alpine AS nginx
