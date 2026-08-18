@@ -23,7 +23,8 @@ function App() {
         <p>Oops... {auth.error.message}</p>
         <button
           onClick={() => {
-            window.location.href = window.location.origin;
+            // Replace /cb with /
+            window.location.href = window.location.href.substring(0, window.location.href.lastIndexOf('cb'));
           }}
           style={{
             background: "#000",
