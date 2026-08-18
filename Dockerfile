@@ -11,3 +11,6 @@ RUN pnpm build
 
 FROM scratch AS final
 COPY --from=build /app/dist /dist
+
+FROM nginx:1-alpine AS nginx
+COPY --from=build /app/dist /usr/share/nginx/html
