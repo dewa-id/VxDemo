@@ -2,7 +2,7 @@ import { useAuth } from "react-oidc-context";
 import { v4 } from "uuid";
 import eboksIconUrl from "./icons/e_boks.png";
 
-export function LoginPage({ error }: { error?: string }) {
+export function LoginPage() {
   const auth = useAuth();
 
   const onSignIn = () =>
@@ -13,7 +13,7 @@ export function LoginPage({ error }: { error?: string }) {
       extraQueryParams: {
         presentation_template_id: "389e8814-740b-48de-af5f-60726633b614",
         service_name: "dewa ApS",
-        scan_qr_message: "Login to our platform",
+        scan_qr_message: "Login to our",
       },
     });
     
@@ -63,23 +63,6 @@ export function LoginPage({ error }: { error?: string }) {
           <br />
           Click below to authenticate using your e-Boks ID.
         </p>
-
-        {error && (
-          <p
-            role="alert"
-            style={{
-              fontSize: "0.9rem",
-              color: "#991B1B",
-              background: "#FEF2F2",
-              border: "1px solid #FECACA",
-              borderRadius: "8px",
-              padding: "0.75rem",
-              marginBottom: "1.5rem",
-            }}
-          >
-            Login failed: {error}
-          </p>
-        )}
 
         <button
           type="button"
