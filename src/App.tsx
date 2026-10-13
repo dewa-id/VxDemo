@@ -1,10 +1,23 @@
+import { useEffect } from "react";
 import { useAuth } from "react-oidc-context";
 import jwtIconUrl from "./icons/jwt-io.svg";
 import ssi_iconUrl from "./icons/SSI_tools.png";
 import { LoginPage } from "./LoginPage";
 
+// OIDC error responses land on /cb?error=...; read it before the URL is cleaned up
+const callbackParams = new URLSearchParams(window.location.search);
+const oidcUrlError =
+  callbackParams.get("error_description") ?? callbackParams.get("error") ?? undefined;
+
 function App() {
   const auth = useAuth();
+
+  const hasError = Boolean(auth.error || oidcUrlError);
+  useEffect(() => {
+    if (!hasError) return;
+    // Send the user back to the login screen URL (replace /cb?error=... with /)
+    window.history.replaceState({}, document.title, new URL(".", window.location.href).pathname);
+  }, [hasError]);
 
   switch (auth.activeNavigator) {
     case "signinSilent":
@@ -17,34 +30,8 @@ function App() {
     return <div>Loading...</div>;
   }
 
-  if (auth.error) {
-    return (
-      <div>
-        <p>Oops... {auth.error.message}</p>
-        <button
-          onClick={() => {
-            // Replace /cb with /
-            window.location.href = window.location.href.substring(0, window.location.href.lastIndexOf('cb'));
-          }}
-          style={{
-            background: "#000",
-            color: "#fff",
-            borderRadius: "999px",
-            border: "1px solid #000",
-            padding: "0.6rem 1rem",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "0.6rem",
-            fontWeight: 700,
-            letterSpacing: "0.02em",
-            textTransform: "uppercase",
-            boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
-          }}
-        >
-          Go back
-        </button>
-      </div>
-    );
+  if (auth.error || oidcUrlError) {
+    return <LoginPage error={auth.error?.message ?? oidcUrlError} />;
   }
 
   if (auth.isAuthenticated) {
