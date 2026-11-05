@@ -59,11 +59,12 @@ function App() {
     const goToDewaUrl = (() => {
       if (idToken == null) return undefined;
 
-      const url = new URL("https://ssi.dewa-id.com/");
-      url.searchParams.set("decoderPayloadDisplay", "raw");
-      url.searchParams.set("decoderSignatureLookup", "url");
-      url.searchParams.set("jwtEncoded", idToken);
-      return url.toString();
+      const params = new URLSearchParams({
+        decoderPayloadDisplay: "raw",
+        decoderSignatureLookup: "url",
+        jwtEncoded: idToken,
+      });
+      return `https://ssi.dewa-id.com/#${params}`;
     })();
 
     return (
