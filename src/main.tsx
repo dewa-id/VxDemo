@@ -5,8 +5,8 @@ import App from "./App.tsx";
 import { AuthProvider, type AuthProviderProps } from "react-oidc-context";
 
 const oidcConfig = {
-  authority: "https://pp.verify-id.eu",
-  client_id: "e-Boks",
+  authority: "https://verify-id.dev",
+  client_id: "demo-example",
   redirect_uri: new URL("cb", window.location.toString()).toString(),
 } satisfies AuthProviderProps;
 
