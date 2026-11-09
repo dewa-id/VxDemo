@@ -1,5 +1,7 @@
 # Verifier Demo
 
+*NOTICE:* Staging branch available at `staging`.
+
 A demo application showing how to interact with the Verifier API.
 
 ## Getting Started
