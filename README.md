@@ -1,6 +1,6 @@
 # Verifier Demo
 
-*NOTICE:* Staging branch available at `staging`.
+*NOTICE:* Staging testing available using the `env/staging` branch.
 
 A demo application showing how to interact with the Verifier API.
 
